@@ -917,15 +917,16 @@ function shuffle(arr) {
 // ===== AUDIO HOOK =====
 let fNowPlaying = false;
 async function playAudioHook() {
+    //Return if already playing (prevent overlapping)
+    if (fNowPlaying) {
+        return;
+    }
     let audio;
     const targetIdx = (phaseMode === 'quiz') ? quizTargetIndex : currentIndex;
     const entry = (targetIdx + 1);
     let audioEntry = `data/audio/${entry}.wav`;
 
-    //Return if already playing (prevent overlapping)
-    if(fNowPlaying) {
-        return;
-    }
+
     
     fNowPlaying = true;
     const url = audioEntry;
@@ -947,11 +948,12 @@ async function playAudioHook() {
     // Play without interruption
     await setTimeout(async () => {
         await audio.play();
-        await setTimeout(async () => {
-            fNowPlaying = false;
-        }, 120);
     }, 120);
-
+     // End of file play action
+     audio.onended = async () => {
+        // On end of playback, loop "for next in queue" playback
+        fNowPlaying = false;
+     };
 
 }
 
