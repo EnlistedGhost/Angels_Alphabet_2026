@@ -1,9 +1,23 @@
 <!DOCTYPE html>
+<!--
+    Created for: Brian Berry and Theta Berry
+    Created by:  Jonathan Dan Zaretsky - @EnlistedGhost
+    Created on:  September 29th, 2026
+
+    Last Updated/Modified: October 4th, 2026
+    License: GNU Affero General Public License Version 3 (AGPL-3.0)
+-->
 <html lang="en">
 <head>
+    <title>Angel's Alphabet — v1.5.3 (Quiz Edition)</title>
+    <!-- author -->
+    <meta name="author" content="Angel's Alphabet Web-App">
+    <!-- responsive meta tag -->
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Angel's Alphabet — v1.5 (Quiz Edition)</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Angel's Alphabet Web-App: A fun, personalized and effectively simple English alphabet learning assistance Web-App" />
+    <!-- Tab Favicon -->
+    <link rel="shortcut icon" type="image" href="data/favicon.ico" />
     <style>
         /* ===== RESET & BASE ===== */
         *, *::before, *::after {
@@ -33,7 +47,7 @@
         /* ===== HEADER ===== */
         header {
             text-align: center;
-            padding: 20px;
+            padding: 10px;
             width: 100%;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: #fff;
@@ -70,7 +84,7 @@
             box-shadow: 0 8px 24px rgba(0,0,0,0.12);
             padding: 30px 40px;
             text-align: center;
-            max-width: 500px;
+            max-width: 568px;
             width: 100%;
             transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
@@ -87,12 +101,14 @@
             color: #764ba2;
             line-height: 1.1;
             min-height: 90px;
+            margin-top: -98px;
+            margin-bottom: -2px;
             transition: transform 0.3s ease-in-out;
         }
 
         .animal-name {
             font-size: 1.8rem;
-            margin-top: 8px;
+            margin-top: -24px;
             color: #5b3a7a;
             transition: transform 0.3s ease-in-out;
         }
@@ -117,7 +133,9 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            margin: 16px auto;
+            margin-top: 0px;
+            margin-left: auto;
+            margin-right: auto;
             font-size: 4rem;
             box-shadow: 0 4px 12px rgba(0,0,0,0.1);
             border: 3px dashed #b8a9d6;
@@ -131,15 +149,17 @@
         /* ===== NAVIGATION BUTTONS ===== */
         .nav-buttons {
             display: flex;
-            gap: 12px;
+            gap: 212px;
             flex-wrap: wrap;
-            justify-content: center;
+            justify-content: right;
+            margin-right: 40px;
+            margin-top: 62px;
         }
 
         .nav-btn {
             font-family: inherit;
-            font-size: 1rem;
-            padding: 10px 22px;
+            font-size: 1.4rem;
+            padding: 8px 16px;
             border: none;
             border-radius: 12px;
             cursor: pointer;
@@ -148,20 +168,30 @@
             letter-spacing: 0.5px;
         }
 
-        .btn-prev { background: #f7b731; color: #fff; }
-        .btn-next { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: #fff; }
-        .btn-home { background: #2ecc71; color: #fff; }
+        .btn-prev { 
+            background: linear-gradient(135deg, #f6af5b, #f6c95b);
+            color: #fff; 
+        }
+        .btn-next { 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #fff; 
+        }
+        .btn-home { 
+            display: none;
+            background: #2ecc71; 
+            color: #fff; 
+        }
 
         /* Disable Next button in Quiz Mode */
         .nav-buttons.quiz-mode .btn-next {
-            opacity: 0.5;
+            opacity: 0;
             cursor: not-allowed;
             pointer-events: none;
         }
 
         /* Disable Previous button in Quiz Mode */
         .nav-buttons.quiz-mode .btn-prev {
-            opacity: 0.5;
+            opacity: 0;
             cursor: not-allowed;
             pointer-events: none;
         }
@@ -173,11 +203,12 @@
 
         /* ===== LETTER GRID (Phase 2 Overview) ===== */
         .letter-grid {
+            opacity: 0.8;
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
             gap: 8px;
             width: 100%;
-            max-width: 520px;
+            max-width: 670px;
         }
 
         .letter-grid.disable {
@@ -189,7 +220,7 @@
         .letter-btn {
             font-family: inherit;
             font-size: 1.3rem;
-            padding: 10px;
+            padding: 20px;
             border: none;
             border-radius: 12px;
             cursor: pointer;
@@ -200,7 +231,7 @@
         }
 
         .letter-btn:hover {
-            background: #d6bcfa;
+            background: #ccadf7;
             transform: scale(1.08);
         }
 
@@ -235,7 +266,7 @@
         }
 
         .wrong {
-            background: rgba(248, 113, 113, 8) !important;
+            background: rgba(248, 113, 113, 1.0) !important;
             color: #fff !important;
             box-shadow: 0 4px 12px rgba(0,0,0,0.25);
             animation: shake 0.4s ease-in-out;
@@ -258,19 +289,22 @@
             display: flex;
             justify-content: space-between;
             width: 100%;
-            max-width: 520px;
+            max-width: 658px;
             margin-bottom: 4px;
             font-weight: bold;
             color: #5b3a7a;
         }
 
         .progress-bar {
+            display: flex;
             width: 100%;
             max-width: 520px;
             height: 12px;
             background: #e0d6cc;
             border-radius: 99px;
             overflow: hidden;
+            margin-top: -41px;
+            margin-left: 138px;
         }
 
         .progress-fill {
@@ -293,14 +327,15 @@
             padding: 8px 16px;
             border: none;
             border-radius: 50px;
-            background: linear-gradient(135deg, #f6af5b, #f6c95b);
+            background: rgba(118, 75, 162, 0.8);
             color: #fff;
             cursor: pointer;
             font-family: inherit;
+            transition: all 0.2s ease;
         }
 
         .play-btn:hover {
-            background: linear-gradient(135deg, #f6af5b, #f6d95b);
+            /* background: linear-gradient(135deg, #f6af5b, #f6d95b);*/
             transform: scale(1.05);
         }
 
@@ -313,7 +348,8 @@
 
         .phase-btn {
             font-family: inherit;
-            padding: 6px 16px;
+            font-size: 1.2em;
+            padding: 8px 16px;
             border-radius: 99px;
             border: 2px solid #764ba2;
             background: transparent;
@@ -399,7 +435,7 @@
 
         /* ===== FOOTER & ANIMATIONS ===== */
         footer {
-            margin-top: 20px;
+            margin-top: 0px;
             padding: 12px;
             font-size: 0.85rem;
             color: #888;
@@ -456,21 +492,19 @@
     <!-- Main Card -->
     <div class="letter-card" id="letterCard">
         <div class="image-placeholder" id="imagePlaceholder" src="">🖼️</div>
+        <!-- Navigation -->
+        <div class="nav-buttons" id="mainNavButtons">
+            <button class="nav-btn btn-prev" id="btnPrev" onclick="prevLetter()">⬅ Prev</button>
+            <button class="nav-btn btn-next" id="btnNext" onclick="nextLetter()">Next ➡</button>
+        </div>
         <div class="letter-big" id="letterBig">#</div>
         <div class="animal-name" id="animalName">—</div>
         <div class="audio-hook" id="audioHook">Press play to hear the hook!</div>
         <div class="audio-section">
             <button class="play-btn" onclick="playAudioHook()">🔊 Play Audio</button>
+            <button class="nav-btn btn-home" onclick="goHome()">🏠 Home</button>
         </div>
     </div>
-
-    <!-- Navigation -->
-    <div class="nav-buttons" id="mainNavButtons">
-        <button class="nav-btn btn-prev" id="btnPrev" onclick="prevLetter()">⬅ Prev</button>
-        <button class="nav-btn btn-next" id="btnNext" onclick="nextLetter()">Next ➡</button>
-        <button class="nav-btn btn-home" onclick="goHome()">🏠 Home</button>
-    </div>
-
     <!-- Letter Grid (Interactive) -->
     <div class="letter-grid" id="letterGrid"></div>
 </div>
@@ -487,7 +521,7 @@
 </div>
 
 <footer>
-    Angel's Alphabet v1.5.1 — &copy; 2026 Brian Berry & Theta Berry
+    Angel's Alphabet v1.5.3 — &copy; 2026 Brian Berry & Theta Berry
 </footer>
 
 <script>
@@ -532,6 +566,7 @@ let tryAgain = 2;
 let quizProgress = 0;
 let quizPercent = 0;
 let quizTargetIndex = null;
+let fNowPlaying = false;
 
 // ===== INIT =====
 function init() {
@@ -574,6 +609,7 @@ function setPhase(mode) {
 
     const navContainer = document.getElementById('mainNavButtons');
     const letterGrd = document.querySelector('.letter-grid');
+
 
     // Hide finish overlay if visible
     document.getElementById('finishOverlay').classList.remove('show');
@@ -756,7 +792,7 @@ function pickNewQuizTarget() {
     const imgEl    = document.getElementById('imagePlaceholder');
 
     letterEl.textContent = "?";
-    animalEl.textContent = '??';
+    animalEl.textContent = '_';
     hookEl.textContent   = '" ??? "';
     let imgSrc           = `data/images/${quizTargetIndex}.jpg`;
     imgEl.innerHTML      = `<img class="image-placeholder" src="${imgSrc}"></img>`;
@@ -915,7 +951,6 @@ function shuffle(arr) {
 }
 
 // ===== AUDIO HOOK =====
-let fNowPlaying = false;
 async function playAudioHook() {
     //Return if already playing (prevent overlapping)
     if (fNowPlaying) {
