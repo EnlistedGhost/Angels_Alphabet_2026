@@ -1,6 +1,6 @@
 # Angel's Alphabet Learning Web-App (2026)
 
-*A fun, personalized and effectively simple alphabet learning assistance Web-App*
+*A fun, personalized and effectively simple English alphabet learning assistance Web-App*
 
 
 
