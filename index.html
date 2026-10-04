@@ -915,11 +915,20 @@ function shuffle(arr) {
 }
 
 // ===== AUDIO HOOK =====
+let fNowPlaying = false;
 async function playAudioHook() {
     let audio;
     const targetIdx = (phaseMode === 'quiz') ? quizTargetIndex : currentIndex;
     const entry = (targetIdx + 1);
     let audioEntry = `data/audio/${entry}.wav`;
+
+    //Return if already playing (prevent overlapping)
+    if(fNowPlaying) {
+        return;
+    } else {
+        fNowPlaying = true;
+    }
+
 
     const url = audioEntry;
     audio = await new Audio(url);
@@ -940,7 +949,12 @@ async function playAudioHook() {
     // Play without interruption
     await setTimeout(async () => {
         await audio.play();
+        await setTimeout(async () => {
+            fNowPlaying = false;
+        }, 120);
     }, 120);
+
+
 }
 
 // ===== INIT =====
