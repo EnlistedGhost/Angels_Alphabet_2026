@@ -925,11 +925,9 @@ async function playAudioHook() {
     //Return if already playing (prevent overlapping)
     if(fNowPlaying) {
         return;
-    } else {
-        fNowPlaying = true;
     }
-
-
+    
+    fNowPlaying = true;
     const url = audioEntry;
     audio = await new Audio(url);
   
