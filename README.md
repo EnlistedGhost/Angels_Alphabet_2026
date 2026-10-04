@@ -6,5 +6,5 @@
 
 -------------------------------------------------
 (C) 2026 - Brian Berry<br />
-(C) 2026 - Tbeta Berry<br />
+(C) 2026 - Theta Berry<br />
 (C) 2026 - Jonathan Dan Zaretsky (EnlistedGhost)
