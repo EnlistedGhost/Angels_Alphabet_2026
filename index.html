@@ -1,0 +1,953 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Angel's Alphabet — v1.5 (Quiz Edition)</title>
+    <style>
+        /* ===== RESET & BASE ===== */
+        *, *::before, *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        @font-face {
+            font-family: 'Poppins_local';
+            src: url('data/fonts/Poppins.woff2') format('woff2');
+            font-weight: normal;
+            font-style: normal;
+            font-display: swap;
+        }
+
+        body {
+            font-family: 'Poppins_local', normal;
+            background: linear-gradient(135deg, #fdfcfb 0%, #e2d1c3 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: #3b2f2f;
+        }
+
+        /* ===== HEADER ===== */
+        header {
+            text-align: center;
+            padding: 20px;
+            width: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #fff;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        header h1 {
+            font-size: 2.2rem;
+            letter-spacing: 2px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        header p {
+            font-size: 1rem;
+            opacity: 0.9;
+            margin-top: 4px;
+        }
+
+        /* ===== MAIN CONTAINER ===== */
+        .app-container {
+            max-width: 720px;
+            width: 100%;
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+
+        /* ===== LETTER CARD ===== */
+        .letter-card {
+            background: #fff;
+            border-radius: 20px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+            padding: 30px 40px;
+            text-align: center;
+            max-width: 500px;
+            width: 100%;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .letter-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 32px rgba(0,0,0,0.18);
+        }
+
+        /* Quiz Mode Specific Styles */
+        .letter-big {
+            font-size: 5rem;
+            font-weight: bold;
+            color: #764ba2;
+            line-height: 1.1;
+            min-height: 90px;
+            transition: transform 0.3s ease-in-out;
+        }
+
+        .animal-name {
+            font-size: 1.8rem;
+            margin-top: 8px;
+            color: #5b3a7a;
+            transition: transform 0.3s ease-in-out;
+        }
+
+        .audio-hook {
+            margin-top: 12px;
+            font-size: 1.05rem;
+            color: #6b5b4f;
+            font-style: italic;
+            background: #fdf6e3;
+            padding: 8px 14px;
+            border-radius: 10px;
+            border: 1px dashed #d4c5a9;
+        }
+
+        /* ===== IMAGE PLACEHOLDER ===== */
+        .image-placeholder {
+            width: 400px;
+            height: 320px;
+            border-radius: 16px;
+            background: linear-gradient(135deg, #a1c4fd 0%, #c2e9fb 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 16px auto;
+            font-size: 4rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            border: 3px dashed #b8a9d6;
+            transition: all 0.3s ease;
+        }
+
+        .image-placeholder:hover {
+            transform: scale(1.03);
+        }
+
+        /* ===== NAVIGATION BUTTONS ===== */
+        .nav-buttons {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .nav-btn {
+            font-family: inherit;
+            font-size: 1rem;
+            padding: 10px 22px;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-weight: bold;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-prev { background: #f7b731; color: #fff; }
+        .btn-next { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: #fff; }
+        .btn-home { background: #2ecc71; color: #fff; }
+
+        /* Disable Next button in Quiz Mode */
+        .nav-buttons.quiz-mode .btn-next {
+            opacity: 0.5;
+            cursor: not-allowed;
+            pointer-events: none;
+        }
+
+        /* Disable Previous button in Quiz Mode */
+        .nav-buttons.quiz-mode .btn-prev {
+            opacity: 0.5;
+            cursor: not-allowed;
+            pointer-events: none;
+        }
+
+        .nav-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+
+        /* ===== LETTER GRID (Phase 2 Overview) ===== */
+        .letter-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
+            gap: 8px;
+            width: 100%;
+            max-width: 520px;
+        }
+
+        .letter-grid.disable {
+            opacity: 0.8;
+            cursor: not-allowed;
+            pointer-events: none;
+        }
+
+        .letter-btn {
+            font-family: inherit;
+            font-size: 1.3rem;
+            padding: 10px;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            background: #ede9fe;
+            color: #5b4a7e;
+            font-weight: bold;
+            transition: all 0.2s ease;
+        }
+
+        .letter-btn:hover {
+            background: #d6bcfa;
+            transform: scale(1.08);
+        }
+
+        /* Active state for navigation (Linear/Random) */
+        .letter-btn.active-nav {
+            background: #7c3aed;
+            color: #fff;
+            box-shadow: 0 4px 12px rgba(118,90,200,0.4);
+        }
+
+        /* Correct state for Quiz Mode */
+        .letter-btn.correct {
+            background: #4ade80 !important;
+            color: #fff !important;
+            transform: scale(1.15);
+            box-shadow: 0 6px 16px rgba(74, 222, 128, 0.5);
+        }
+
+        .correct {
+            background: #4ade80 !important;
+            color: #fff !important;
+            box-shadow: 0 6px 16px rgba(74, 222, 128, 0.5);
+            transform: translateY(-4px);
+            box-shadow: 0 12px 32px rgba(0,0,0,0.18);
+        }
+
+        /* Wrong state for Quiz Mode */
+        .letter-btn.wrong {
+            background: #f87171 !important;
+            color: #fff !important;
+            animation: shake 0.4s ease-in-out;
+        }
+
+        .wrong {
+            background: rgba(248, 113, 113, 8) !important;
+            color: #fff !important;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+            animation: shake 0.4s ease-in-out;
+            border-radius: 12px;
+            transition: all 0.2s ease;
+        }
+
+        .up-half-rounded {
+            /* border-radius: top-left top-right bottom-right bottom-left; */
+            border-radius: 12px 12px 0px 0px;
+        }
+
+        .low-half-rounded {
+            /* border-radius: top-left top-right bottom-right bottom-left; */
+            border-radius: 0px 0px 12px 12px;
+        }
+
+        /* ===== PROGRESS BAR & SCORE ===== */
+        .status-bar {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            max-width: 520px;
+            margin-bottom: 4px;
+            font-weight: bold;
+            color: #5b3a7a;
+        }
+
+        .progress-bar {
+            width: 100%;
+            max-width: 520px;
+            height: 12px;
+            background: #e0d6cc;
+            border-radius: 99px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #764ba2, #f6af5b);
+            border-radius: 99px;
+            transition: width 0.4s ease;
+        }
+
+        /* ===== AUDIO HOOK DISPLAY ===== */
+        .audio-section {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-top: 10px;
+        }
+
+        .play-btn {
+            font-size: 1.4rem;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 50px;
+            background: linear-gradient(135deg, #f6af5b, #f6c95b);
+            color: #fff;
+            cursor: pointer;
+            font-family: inherit;
+        }
+
+        .play-btn:hover {
+            background: linear-gradient(135deg, #f6af5b, #f6d95b);
+            transform: scale(1.05);
+        }
+
+        /* ===== PHASE SELECTOR ===== */
+        .phase-toggle {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 4px;
+        }
+
+        .phase-btn {
+            font-family: inherit;
+            padding: 6px 16px;
+            border-radius: 99px;
+            border: 2px solid #764ba2;
+            background: transparent;
+            color: #5b4a7e;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .phase-btn.active {
+            background: #764ba2;
+            color: #fff;
+        }
+
+        /* ===== FINISH / CONGRATULATIONS PAGE ===== */
+       .finish-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.65);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .finish-overlay.show {
+            display: flex;
+            backdrop-filter: blur(4px);
+        }
+
+        .finish-card {
+            background: #fff;
+            border-radius: 24px;
+            padding: 40px 50px;
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 420px;
+            width: 90%;
+            animation: popIn 0.5s ease-out;
+        }
+
+        .finish-card h2 {
+            font-size: 2rem;
+            color: #764ba2;
+            margin-bottom: 8px;
+        }
+
+        .finish-card p {
+            font-size: 1.1rem;
+            color: #5b3a7a;
+            margin-bottom: 6px;
+        }
+
+        .finish-card .final-score {
+            font-size: 2.4rem;
+            font-weight: bold;
+            color: #f6af5b;
+            margin: 12px 0;
+        }
+
+        .finish-card .emoji-big {
+            font-size: 3.5rem;
+            margin-bottom: 8px;
+        }
+
+        .finish-btn {
+            margin-top: 16px;
+            padding: 12px 32px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            border: none;
+            border-radius: 99px;
+            cursor: pointer;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #fff;
+            font-family: inherit;
+            letter-spacing: 0.5px;
+        }
+
+        .finish-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(102,126,234,0.4);
+        }
+
+        /* ===== FOOTER & ANIMATIONS ===== */
+        footer {
+            margin-top: 20px;
+            padding: 12px;
+            font-size: 0.85rem;
+            color: #888;
+        }
+
+        @keyframes popIn {
+            from { transform: scale(0.7); opacity: 0; }
+            to   { transform: scale(1); opacity: 1; }
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-8px); }
+            75% { transform: translateX(8px); }
+        }
+
+        .pop-in { animation: popIn 0.35s ease-out; }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 480px) {
+            header h1 { font-size: 1.4rem; }
+            .letter-big { font-size: 3.5rem; }
+            .image-placeholder { width: 220px; height: 160px; }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>🐾 Angel's Alphabet 🐾</h1>
+    <p id="mode-subtitle">Phase 1 — Learning Mode</p>
+</header>
+
+<div class="app-container">
+
+    <!-- Phase Toggle -->
+    <div class="phase-toggle">
+        <button class="phase-btn active" id="btnLinear" onclick="setPhase('linear')">📖 Linear</button>
+        <button class="phase-btn" id="btnRandom" onclick="setPhase('random')">🎲 Random</button>
+        <button class="phase-btn" id="btnQuiz" onclick="setPhase('quiz')">🎓 Quiz</button>
+    </div>
+
+    <!-- Progress / Score Bar -->
+    <div class="status-bar">
+        <span id="progressText">Progress: 0%</span>
+        <span id="scoreText" style="display:none;">Correct: 0</span>
+        <span id="wrongText" style="display:none;">Wrong: 0</span>
+    </div>
+
+    <div class="progress-bar">
+        <div class="progress-fill" id="progressFill" style="width:0%"></div>
+    </div>
+
+    <!-- Main Card -->
+    <div class="letter-card" id="letterCard">
+        <div class="image-placeholder" id="imagePlaceholder" src="">🖼️</div>
+        <div class="letter-big" id="letterBig">#</div>
+        <div class="animal-name" id="animalName">—</div>
+        <div class="audio-hook" id="audioHook">Press play to hear the hook!</div>
+        <div class="audio-section">
+            <button class="play-btn" onclick="playAudioHook()">🔊 Play Audio</button>
+        </div>
+    </div>
+
+    <!-- Navigation -->
+    <div class="nav-buttons" id="mainNavButtons">
+        <button class="nav-btn btn-prev" id="btnPrev" onclick="prevLetter()">⬅ Prev</button>
+        <button class="nav-btn btn-next" id="btnNext" onclick="nextLetter()">Next ➡</button>
+        <button class="nav-btn btn-home" onclick="goHome()">🏠 Home</button>
+    </div>
+
+    <!-- Letter Grid (Interactive) -->
+    <div class="letter-grid" id="letterGrid"></div>
+</div>
+
+<!-- ===== FINISH / CONGRATULATIONS OVERLAY ===== -->
+<div class="finish-overlay" id="finishOverlay">
+    <div class="finish-card">
+        <div class="emoji-big">🎉🏆</div>
+        <h2>Congratulations!</h2>
+        <p id="finishMessage">You've completed Angel's Alphabet!</p>
+        <p class="final-score" id="finalScoreDisplay"></p>
+        <button class="finish-btn" onclick="resetApp()">✨ Start Over</button>
+    </div>
+</div>
+
+<footer>
+    Angel's Alphabet v1.5.1 — &copy; 2026 Brian Berry & Theta Berry
+</footer>
+
+<script>
+// ===== DATA =====
+const alphabetData = [
+  { letter:"A", animal:"Alligator", visual_anchor:"", audio_hook:"Big reptile at Des & Eddie's new home" },
+  { letter:"B", animal:"Bear", visual_anchor:"", audio_hook:"Bear of Kennedy Meadows" },
+  { letter:"C", animal:"Chameleon", visual_anchor:"", audio_hook:"Lizard who changes its colors" },
+  { letter:"D", animal:"Dogo (Scotty)", visual_anchor:"", audio_hook:"Our beautiful Dogo Scotty" },
+  { letter:"E", animal:"Eagle", visual_anchor:"", audio_hook:"An Eagle fishing" },
+  { letter:"F", animal:"Fox", visual_anchor:"", audio_hook:"The sly fox" },
+  { letter:"G", animal:"Gecko", visual_anchor:"", audio_hook:"Like the ones we catch in my front yard" },
+  { letter:"H", animal:"Hummingbird", visual_anchor:"", audio_hook:"Hummingbird getting a drink from my feeder" },
+  { letter:"I", animal:"Impala", visual_anchor:"", audio_hook:"Impala leaping through the air" },
+  { letter:"J", animal:"Jaguar", visual_anchor:"", audio_hook:"Jaguar coming down from his tree" },
+  { letter:"K", animal:"Komodo Dragon", visual_anchor:"", audio_hook:"Angel's Komodo Dragon" },
+  { letter:"L", animal:"Leopard Lizard", visual_anchor:"", audio_hook:"Leopard Lizard Brian saw with a Whiptail in his mouth" },
+  { letter:"M", animal:"Mongoose", visual_anchor:"", audio_hook:"The ultimate snake fighter" },
+  { letter:"N", animal:"Nighthawk", visual_anchor:"", audio_hook:"Nighthawk ready to lift off" },
+  {letter:"O", animal:"Owl", visual_anchor:"", audio_hook:"The Owl we saw in the Black Hills" },
+  { letter:"P", animal:"Parakeet", visual_anchor:"", audio_hook:"The Parakeet that Desiree has" },
+  { letter:"Q", animal:"Quail", visual_anchor:"", audio_hook:"Like the Quail next to Ya-Ya's house" },
+  { letter:"R", animal:"Roosters", visual_anchor:"", audio_hook:"Roosters fighting, like the ones we saw on movie night" },
+  { letter:"S", animal:"Sidewinder", visual_anchor:"", audio_hook:"The Sidewinder in our desert" },
+  { letter:"T", animal:"Turtle", visual_anchor:"", audio_hook:"Brian holding a giant Turtle" },
+  { letter:"U", animal:"Unicorn", visual_anchor:"", audio_hook:"The magical Unicorn" },
+  { letter:"V", animal:"Viper", visual_anchor:"", audio_hook:"Like when a Viper attacks" },
+  { letter:"W", animal:"Whiptail", visual_anchor:"", audio_hook:"A Whiptail escaping the jaws of a Leopard Lizard" },
+  { letter:"X", animal:"X-ray (Fish)", visual_anchor:"", audio_hook:"X-ray of a fish" },
+  { letter:"Y", animal:"Yellowjackets", visual_anchor:"", audio_hook:"The Yellowjackets we have to avoid in Brian's front yard" },
+  { letter:"Z", animal:"Zebertail", visual_anchor:"", audio_hook:"The fastest lizard in the desert, who can run on his hind legs" }
+];
+
+// ===== STATE =====
+let currentIndex = 0;
+let randomIndex = 0;
+let phaseMode = 'linear';
+let shuffledOrder = [];
+let quizScore = 0;
+let wrongScore = 0;
+let tryAgain = 2;
+let quizProgress = 0;
+let quizPercent = 0;
+let quizTargetIndex = null;
+
+// ===== INIT =====
+function init() {
+    buildLetterGrid();
+    setPhase('linear');
+}
+
+// ===== BUILD LETTER GRID =====
+function buildLetterGrid() {
+    const grid = document.getElementById('letterGrid');
+    alphabetData.forEach((entry, i) => {
+        const btn = document.createElement('button');
+        btn.className = 'letter-btn';
+        btn.textContent = entry.letter;
+        btn.dataset.index = i;
+        btn.onclick = () => handleGridClick(i);
+        grid.appendChild(btn);
+    });
+}
+
+// ===== PHASE SWITCHING =====
+function setPhase(mode) {
+    phaseMode = mode;
+
+    // Update UI Buttons
+    document.getElementById('btnLinear').classList.toggle('active', mode === 'linear');
+    document.getElementById('btnRandom').classList.toggle('active', mode === 'random');
+    document.getElementById('btnQuiz').classList.toggle('active', mode === 'quiz');
+
+    // Update Subtitle
+    const sub = document.getElementById('mode-subtitle');
+    if (mode === 'linear') sub.textContent = "Phase 1 — Learning Mode";
+    else if (mode === 'random') sub.textContent = "Phase 2 — Random Challenge";
+    else if (mode === 'quiz') sub.textContent = "Phase 3 — 🎓 Quiz Time: Letter Match!";
+
+    // Clear grid feedback states
+    document.querySelectorAll('.letter-btn').forEach(btn => {
+        btn.classList.remove('active-nav', 'correct', 'wrong');
+    });
+
+    const navContainer = document.getElementById('mainNavButtons');
+    const letterGrd = document.querySelector('.letter-grid');
+
+    // Hide finish overlay if visible
+    document.getElementById('finishOverlay').classList.remove('show');
+
+    if (mode === 'linear') {
+        document.getElementById('wrongText').style.display = 'none';
+        document.getElementById('scoreText').style.display = 'none';
+        letterGrd.classList.add('disable');
+        currentIndex = 0;
+        displayEntry(0);
+        navContainer.classList.remove('quiz-mode');
+    } else if (mode === 'random') {
+        document.getElementById('wrongText').style.display = 'none';
+        document.getElementById('scoreText').style.display = 'none';
+        letterGrd.classList.remove('disable');
+        currentIndex = 0;
+        shuffledOrder = shuffle([...Array(alphabetData.length).keys()]);
+        displayEntry(0);
+        navContainer.classList.remove('quiz-mode');
+    } else if (mode === 'quiz') {
+        quizScore = 0;
+        wrongScore = 0;
+        document.getElementById('wrongText').style.display = 'block';
+        document.getElementById('wrongText').style.color = '#606060';
+        document.getElementById('scoreText').style.display = 'block';
+        document.getElementById('scoreText').style = 'color: #09b552; text-shadow: 0px 0px 2px rgba(74,222,128,0.3)';
+        updateScore();
+        // Reset progress bar to 0% for quiz mode
+        document.getElementById('progressFill').style.width = '0%';
+        document.getElementById('progressText').textContent = `Progress: 0%`;
+        navContainer.classList.add('quiz-mode');
+        letterGrd.classList.remove('disable');
+        pickNewQuizTarget();
+    }
+}
+
+// ===== DISPLAY ENTRY =====
+function displayEntry(index) {
+    if (index < 0 || index >= alphabetData.length) return;
+
+    const entry    = alphabetData[index];
+    const letterEl = document.getElementById('letterBig');
+    const animalEl = document.getElementById('animalName');
+    const hookEl   = document.getElementById('audioHook');
+    const imgEl    = document.getElementById('imagePlaceholder');
+
+    // Populate content with animation
+    letterEl.textContent = entry.letter;
+    animalEl.textContent = entry.animal;
+    hookEl.textContent   = '"' + entry.audio_hook + '"';
+    let imgSrc           = `data/images/${index}.jpg`;
+    imgEl.innerHTML      = `<img class="image-placeholder" src="${imgSrc}"></img>`;
+
+    // Update progress bar for non-quiz modes
+    if (phaseMode !== 'quiz') {
+        // Default to linear mode
+        let progressStep = index;
+
+        // If we are in random mode, use randomIndex to adjust incrementally
+        if (phaseMode === 'random') {
+            progressStep = randomIndex;
+        }
+    
+        const pct = (progressStep / (alphabetData.length - 1)) * 100;
+        document.getElementById('progressFill').style.width = pct + '%';
+        document.getElementById('progressText').textContent = `Progress: ${Math.round(pct)}%`;
+    }
+
+    
+    if (phaseMode !== 'quiz') {
+        // Highlight active letter in grid (Linear/Random only)
+        document.querySelectorAll('.letter-btn').forEach((btn, i) => {
+            btn.classList.toggle('active-nav', i === index);
+        });
+    }
+
+    // Pop-in animation
+    const card = document.getElementById('letterCard');
+    card.classList.remove('pop-in');
+    void card.offsetWidth;
+    card.classList.add('pop-in');
+}
+
+// ===== NAVIGATION =====
+function nextLetter() {
+    if (phaseMode === 'linear') {
+        if (currentIndex < alphabetData.length - 1) {
+            currentIndex++;
+            displayEntry(currentIndex);
+        } else {
+            showLinearFinishPage();
+        }
+    } else if (phaseMode === 'random') {
+        // Find where we currently are in the shuffled deck
+        let currentPos = shuffledOrder.indexOf(currentIndex);
+        
+        if (randomIndex < (shuffledOrder.length - 1)) {
+            // Move to the next card in the shuffled deck
+            currentIndex = shuffledOrder[currentPos + 1];
+            randomIndex ++;
+            displayEntry(currentIndex);
+        } else {
+            // Trigger finish page when complete!
+            showLinearFinishPage();
+            // Reset randomIndex position for next go-around
+            randomIndex = 0;
+        }
+    }
+}
+
+function showLinearFinishPage() {
+    const overlay = document.getElementById('finishOverlay');
+    const messageEl = document.getElementById('finishMessage');
+    const scoreDisplay = document.getElementById('finalScoreDisplay');
+    const emojiEl = overlay.querySelector('.emoji-big');
+
+    // Customize the pop-up cards contents cleanly for learning mode
+    if (emojiEl) {
+        emojiEl.textContent = "🏆";
+        messageEl.textContent = "You've explored every animal in Angel's Alphabet!";
+        scoreDisplay.textContent = "Ready for the Quiz Challenge next?";
+        overlay.classList.add('show');
+    }
+}
+
+function prevLetter() {
+    if (phaseMode === 'linear') {
+        if (currentIndex > 0) {
+            currentIndex--;
+            displayEntry(currentIndex);
+        }
+    } else if (phaseMode === 'random') {
+        const prev = shuffledOrder[(shuffledOrder.indexOf(currentIndex) - 1 + alphabetData.length) % alphabetData.length];
+        currentIndex = prev;
+        displayEntry(currentIndex);
+    }
+}
+
+function goHome() {
+    setPhase('linear');
+    const letterGrd = document.querySelector('.letter-grid');
+    letterGrd.classList.add('disable');
+}
+
+// ===== QUIZ LOGIC =====
+function pickNewQuizTarget() {
+    // If all letters have been answered correctly, show finish page
+    if (quizScore >= alphabetData.length) {
+        showFinishPage();
+        return;
+    }
+
+    // Pick a random index that hasn't been answered yet
+    const unansweredIndices = [];
+    document.querySelectorAll('.letter-btn').forEach((btn, i) => {
+        if (!btn.classList.contains('correct')) {
+            unansweredIndices.push(i);
+        }
+    });
+
+    if (unansweredIndices.length === 0) {
+        showFinishPage();
+        return;
+    }
+
+    const randomUnanswered = unansweredIndices[Math.floor(Math.random() * unansweredIndices.length)];
+    quizTargetIndex = randomUnanswered;
+
+    // Clear previous grid feedback (keep correct ones as permanent markers)
+    document.querySelectorAll('.letter-btn').forEach(btn => {
+        btn.classList.remove('wrong');
+    });
+
+    const entry = alphabetData[quizTargetIndex];
+
+    // Update UI for Quiz Mode — show "?" for the letter, animal name & hook visible
+    const letterEl = document.getElementById('letterBig');
+    const animalEl = document.getElementById('animalName');
+    const hookEl   = document.getElementById('audioHook');
+    const imgEl    = document.getElementById('imagePlaceholder');
+
+    letterEl.textContent = "?";
+    animalEl.textContent = '??';
+    hookEl.textContent   = '" ??? "';
+    let imgSrc           = `data/images/${quizTargetIndex}.jpg`;
+    imgEl.innerHTML      = `<img class="image-placeholder" src="${imgSrc}"></img>`;
+}
+
+function handleGridClick(clickedIndex) {
+    if (phaseMode !== 'quiz') {
+        if (phaseMode === 'random') {
+            currentIndex = clickedIndex;
+            displayEntry(clickedIndex);
+        }
+        return;
+    }
+
+    // Define constants
+    const btn = document.querySelectorAll('.letter-btn')[clickedIndex];
+    const letterCrd = document.getElementById('letterCard');
+    const letterEl = document.getElementById('letterBig');
+    const animalEl = document.getElementById('animalName');
+    const hookEl   = document.getElementById('audioHook');
+    const letterGrd = document.querySelector('.letter-grid');
+    const entry = alphabetData[quizTargetIndex];
+    let fWrong = false;
+
+    // Temporarily Prevent Grid Clicks
+    letterGrd.classList.add('disable');
+
+    if (clickedIndex === quizTargetIndex) {
+        // Zero-out Attempt padding (Go to Next Letter)
+        tryAgain = 0;
+
+        // CORRECT!
+        btn.classList.add('correct');
+        letterCrd.classList.add('correct');
+
+        // Reveal the answer in the card
+        const entry = alphabetData[quizTargetIndex];
+        letterEl.textContent = entry.letter;
+        animalEl.textContent = entry.animal;
+        hookEl.textContent   = '"' + entry.audio_hook + '"';
+
+        // Remove 'correct' class after animation
+        setTimeout(() => {
+            btn.classList.remove('correct');
+            letterCrd.classList.remove('correct');
+        }, 1500);
+    } else {
+        // Remove attempt padding
+        tryAgain -= 1;
+
+        // Emphasize wrong letter
+        btn.classList.add('wrong');
+
+        // Reveal the answer in the card
+        // Emphasize correct letter
+        setTimeout(() => {
+            letterEl.classList.add('up-half-rounded');
+            animalEl.classList.add('low-half-rounded');
+            letterEl.classList.add('wrong');
+            animalEl.classList.add('wrong');
+            if (tryAgain !== 1) {
+                letterEl.textContent = entry.letter;
+                animalEl.textContent = entry.animal;
+                hookEl.textContent   = '"' + entry.audio_hook + '"';
+            }
+        }, 350);
+
+        // Remove 'wrong' class after animation
+        setTimeout(() => {
+            // Re-enable Button Clicks
+            letterGrd.classList.remove('disable');
+            btn.classList.remove('wrong');
+        }, 2250);
+
+        // Remove 'wrong' class emphasis after animation
+        setTimeout(() => {
+            letterEl.classList.remove('wrong');
+            animalEl.classList.remove('wrong');
+            letterEl.classList.remove('up-half-rounded');
+            animalEl.classList.remove('low-half-rounded');
+        }, 2250);
+
+        fWrong = true;
+    }
+
+    // Update Progress and Score if Picking New Target
+    if (tryAgain === 0) {
+        // Increment Score
+        if (fWrong) {
+            wrongScore++;
+        } else {
+            quizScore++;
+        }
+
+        // Update progress bar immediately
+        quizPercent = (wrongScore + quizScore);
+        const progressPct = Math.round((quizPercent / (alphabetData.length - 1)) * 100);
+        document.getElementById('progressFill').style.width = progressPct + "%";
+        document.getElementById('progressText').textContent = `Progress: ${progressPct}%`;
+        updateScore();
+    }
+
+    // Check if all answered correctly → show finish page
+    quizProgress = quizScore + wrongScore;
+    if (quizProgress >= (alphabetData.length - 1)) {
+        setTimeout(() => {
+            showFinishPage();
+        }, 800);
+        return;
+    }
+
+    if (tryAgain === 1) {
+        return;
+    }
+
+    // Wait a moment then pick new target
+    setTimeout(() => {
+        // Re-enable Button Clicks
+        letterGrd.classList.remove('disable');
+        pickNewQuizTarget();
+        tryAgain = 2;
+    }, 2500);
+}
+
+function updateScore() {
+    document.getElementById('scoreText').textContent = `Score: ${quizScore}`;
+    document.getElementById('wrongText').textContent = `Wrong: ${wrongScore}`;
+}
+
+// ===== FINISH PAGE =====
+function showFinishPage() {
+    const overlay = document.getElementById('finishOverlay');
+    const finalScoreDisplay = document.getElementById('finalScoreDisplay');
+    finalScoreDisplay.textContent = `${quizScore} / ${alphabetData.length}`;
+    overlay.classList.add('show');
+}
+
+function resetApp() {
+    // Hide finish page
+    document.getElementById('finishOverlay').classList.remove('show');
+    // Reset to linear mode with clean state
+    quizScore = 0;
+    currentIndex = 0;
+    document.getElementById('wrongText').style.display = 'none';
+    document.getElementById('scoreText').style.display = 'none';
+    setPhase('linear');
+}
+
+// ===== UTILITY =====
+function shuffle(arr) {
+    for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr;
+}
+
+// ===== AUDIO HOOK =====
+async function playAudioHook() {
+    let audio;
+    const targetIdx = (phaseMode === 'quiz') ? quizTargetIndex : currentIndex;
+    const entry = (targetIdx + 1);
+    let audioEntry = `data/audio/${entry}.wav`;
+
+    const url = audioEntry;
+    audio = await new Audio(url);
+  
+    // Wait until the browser is ready
+    await new Promise((resolve) => {
+        const handler = () => {
+            audio.removeEventListener('canplaythrough', handler);
+            resolve();
+        };
+        if (audio.readyState >= 2) { // HAVEMETADATA or higher
+            handler();
+        } else {
+            audio.addEventListener('canplaythrough', handler, { once: true });
+        }
+    });
+        
+    // Play without interruption
+    await setTimeout(async () => {
+        await audio.play();
+    }, 120);
+}
+
+// ===== INIT =====
+document.addEventListener('DOMContentLoaded', () => {
+    buildLetterGrid();
+    setPhase('linear');
+});
+</script>
+</body>
+</html>
